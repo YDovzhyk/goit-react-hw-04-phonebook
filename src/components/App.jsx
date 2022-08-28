@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 
 import ContactForm from "./Phonebook/ContactForm/ContactForm";
@@ -7,75 +7,65 @@ import ContactList from "./Phonebook/ContactList/ContactList";
 
 import s from "../components/Phonebook/ContactList/contactList.module.css"
 
-export class App extends Component {
-    state = {
-        contacts: [],
-        filter: '',
+export const App = () => {
+
+    const [contacts, setContacts] = useState(() => {
+        const value = JSON.parse(localStorage.getItem("contacts")); 
+        return value || [];
+    });
+    const [filter, setFilter] = useState("");
+
+    useEffect(() => {
+        localStorage.setItem("contacts", JSON.stringify(contacts));
+    }, [contacts]);
+
+    const formSubmitHandler = (data) => {
+        console.log(data)
+        if(contacts.find((element) => element.name === data.name)) {
+            return alert (`${data.name} is alredy in contact`);
+        }
+        setContacts(prevContacts => {
+            const newContact = {
+                ...data,
+            };
+            return [...prevContacts, newContact];
+        })
+    };
+
+    const deleteContact = (contactId) => {
+        setContacts(prevContacts =>
+            prevContacts.filter((element) => element.idName !== contactId),
+        )};
+
+
+    const changeFilter = e => {
+        setFilter(e.currentTarget.value)
+    };
+
+    const getFiltredContacts = () => {
+        if(!filter) {
+            return contacts;
         }
         
-        // Після першого рендеру в фунції componentDidMount віправляється запрос в LocalStorage і якщо там щось є перезаписується setState і знову відбувається рендерінг
-        componentDidMount() {
-            const contacts = JSON.parse(localStorage.getItem("contacts"));
-            if(contacts?.length) {
-                this.setState({
-                    contacts,
-                })
-            }
-        }
-        // Після наступних рендерінгів перевіряється чи змінився стан contact і якщо змінився то записуємо зміни в LocalStorage
-        componentDidUpdate(prevProps, prevState) {
-            const {contacts} = this.state;
-            if(prevState.contacts !== contacts) {
-                localStorage.setItem("contacts", JSON.stringify(contacts));
-            }
-        }
-
-// Записуємо нову дату в contacts (зберігаємо минулий стан)
-formSubmitHandler = data => {
-    if(this.state.contacts.find((element) => element.data.name === data.name)) {
-        return alert (`${data.name} is alredy in contact`);
-    }
-    const listContacts = {
-        data,
-    };
-this.setState(prevState => ({
-    contacts: [listContacts, ...prevState.contacts],
-}));
-};
-
-changeFilter = e => {
-    this.setState({filter: e.currentTarget.value});
-};
-
-getFiltredContacts = () => {
-    const {filter, contacts} = this.state;
     const normalizedFilter = filter.toLowerCase();
+
     return contacts.filter((element) =>
-    element.data.name.toLowerCase().includes(normalizedFilter));
-}
+    element.name.toLowerCase().includes(normalizedFilter));
+    }
 
-deleteContact = contactId => {
-    this.setState(prevState => ({
-        contacts: prevState.contacts.filter((element) => element.data.id !== contactId),
-    }));
-};
+    const filtredContacts = getFiltredContacts();
 
-    render(){
-        const filtredContacts = this.getFiltredContacts();
-
-        return (
-            <div className={s.phonebook}>
+    return (
+        <div className={s.phonebook}>
                 <h2 className={s.phonebookTitle}>Phonebook</h2>
-                <ContactForm onSubmit={this.formSubmitHandler} />
-
+                <ContactForm onSubmit={formSubmitHandler} />
                 <h2 className={s.phonebookTitle}>Contacts</h2>
                 <div className={s.contact}>
-                    <Filter value={this.filter} onChange={this.changeFilter}/>
-                    <ContactList options={filtredContacts} onDeleteContact={this.deleteContact}/>
+                    <Filter value={filter} onChange={changeFilter}/>
+                    <ContactList options={filtredContacts} onDeleteContact={deleteContact}/>
                 </div>
             </div>
-        )
-    }
+    )
 }
 
 export default App;
@@ -85,10 +75,12 @@ App.defaultProps = {
 }
 
 App.propTypes = {
+    contactId: PropTypes.string,
     data: PropTypes.shape({
-        id: PropTypes.string,
+        idName: PropTypes.string,
+        idNumber: PropTypes.string,
+        idLicence: PropTypes.string,
         name: PropTypes.string,
         number: PropTypes.string,
-        licence: PropTypes.bool,
         }),
 }

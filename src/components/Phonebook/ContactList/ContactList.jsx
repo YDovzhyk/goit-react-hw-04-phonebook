@@ -5,9 +5,9 @@ const ContactList = ({options, onDeleteContact}) => {
     return (
     <ul className={s.phonebookList}>
         {options.map((element) => (
-        <li key={element.data.id} className={s.phonebookListItem}>
-            <span className={s.phonebookListData}>{element.data.name}: {element.data.number}</span>
-            <button className={s.phonebookListButton} type='button' onClick={() => onDeleteContact(element.data.id)}>Delete</button>
+        <li key={element.idName} className={s.phonebookListItem}>
+            <span className={s.phonebookListData}>{element.name}: {element.number}</span>
+            <button className={s.phonebookListButton} type='button' onClick={() => onDeleteContact(element.idName)}>Delete</button>
             </li>
 ))}
     </ul>
@@ -22,10 +22,11 @@ ContactList.defaultProps = {
 ContactList.propTypes = {
     onDeleteContact: PropTypes.func,
     options: PropTypes.arrayOf(PropTypes.shape({
-            id: PropTypes.string,
-            name: PropTypes.string,
-            number: PropTypes.string,
-            licence: PropTypes.bool,
-            })
+        idName: PropTypes.string,
+        idNumber: PropTypes.string,
+        idLicence: PropTypes.string,
+        name: PropTypes.string,
+        number: PropTypes.string,
+        })
     ),
     }
