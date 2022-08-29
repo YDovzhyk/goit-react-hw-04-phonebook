@@ -20,7 +20,6 @@ export const App = () => {
     }, [contacts]);
 
     const formSubmitHandler = (data) => {
-        console.log(data)
         if(contacts.find((element) => element.name === data.name)) {
             return alert (`${data.name} is alredy in contact`);
         }
@@ -36,7 +35,6 @@ export const App = () => {
         setContacts(prevContacts =>
             prevContacts.filter((element) => element.idName !== contactId),
         )};
-
 
     const changeFilter = e => {
         setFilter(e.currentTarget.value)
@@ -71,10 +69,12 @@ export const App = () => {
 export default App;
 
 App.defaultProps = {
+    formSubmitHandler: () => {},
     data: {},
 }
 
 App.propTypes = {
+    formSubmitHandler: PropTypes.func,
     contactId: PropTypes.string,
     data: PropTypes.shape({
         idName: PropTypes.string,

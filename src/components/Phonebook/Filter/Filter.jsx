@@ -8,12 +8,13 @@ const Filter = ({value, onChange}) => (
             Find by Name
             <input className={s.contactInput} type="text" value={value} onChange={onChange} />
         </label>
-    
 );
 
 export default Filter;
 
-Filter.defaultProps = {}
+Filter.defaultProps = {
+    onChange: () => {},
+}
 
 Filter.propTypes = {
     value: PropTypes.string,

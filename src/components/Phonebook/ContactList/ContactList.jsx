@@ -17,6 +17,7 @@ export default ContactList;
 
 ContactList.defaultProps = {
     contacts: [],
+    onDeleteContact: () => {},
 }
 
 ContactList.propTypes = {
@@ -29,4 +30,4 @@ ContactList.propTypes = {
         number: PropTypes.string,
         })
     ),
-    }
+}
